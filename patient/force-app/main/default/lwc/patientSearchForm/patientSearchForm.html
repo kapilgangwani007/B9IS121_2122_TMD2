@@ -1,0 +1,272 @@
+<template>
+   <lightning-card>
+                <div class="slds-p-horizontal_medium">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-6">
+                            <lightning-combobox name="Search by" label="Search by:" 
+                            value={searchByValue} options={searchByOptions} onchange={handleSeachByChange}></lightning-combobox>
+                        </div>
+                        <template if:true={searchByValue}>
+                            <div class="slds-col slds-size_1-of-6 searchopt">
+                                <lightning-input name="Search Patient Records" label={seachKeyLabel} type="text" 
+                                value={searchKeyValue} onchange={handleSearchKeyChange}></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-6" style="margin-top: 6px;">
+                                <br/>
+                                <lightning-button variant="brand" label="Search" title="Search" icon-name="utility:search" icon-position="right" onclick={handleSearchRecords} ></lightning-button>
+                            </div>
+                        </template>
+                    </div>
+                    
+
+                    <template if:true={showRecords}>
+                        <lightning-card> 
+                            <div class="slds-text-heading_medium"><b>Patient's Record Found ({countOfRecords})</b></div>
+                                <div class="slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none modalBodyy">
+
+                                <lightning-card>
+                                <template if:false={isShowSpinner}>
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Medical Record #">Medical Record #</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Name">Name</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="PPS Number">PPS Number</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Contact Number">Contact Number</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Billing Status">Billing Status</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Action">Action</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={modifiedPatientRecords} for:item="obj">
+                                        <tr class="inputRows" key={obj.Id}>
+                                            <th data-label="Medical Record #" scope="row">
+                                                <lightning-input type="text" data-key={obj.Id} class="fields" variant="label-hidden" label="Medical Record #" 
+                                                name="Medical Record #" value={obj.Name} data-id={obj.Id} disabled="true"></lightning-input>
+                                            </th>
+                                            <td data-label="Name">
+                                                <lightning-input type="text" data-key={obj.Id} class="fields" variant="label-hidden" label="Name" 
+                                                name="Name" value={obj.Full_Name__c} data-id={obj.Id} disabled="true"></lightning-input>
+                                            </td>
+                                            <td data-label="PPS Number">
+                                                <lightning-input type="text" class="fields" data-key={obj.Id} variant="label-hidden" 
+                                                label="PPS Number" name="PPS Number" value={obj.PPS_Number__c} 
+                                                data-id={obj.Id} disabled="true"></lightning-input>
+                                            </td>
+                                            <td data-label="Contact Number">
+                                                <lightning-input type="phone" class="fields" data-key={obj.Id} variant="label-hidden"
+                                                    label="Contact Number" name="Contact Number" value={obj.Contact_Number__c} 
+                                                    data-id={obj.Id} disabled="true"></lightning-input>
+                                            </td>
+                                             <td data-label="Billing Status">
+                                                <lightning-input type="phone" class="fields" data-key={obj.Id} variant="label-hidden"
+                                                    label="Billing Status" name="Billing Status" value={obj.Billing_Status__c} 
+                                                    data-id={obj.Id} disabled="true"></lightning-input>
+                                            </td>
+                                            <td data-label="Action">
+                                                <lightning-button-icon icon-name="action:preview"  alternative-text="View Patient Details" title="View Patient Details" data-id={obj.Id} 
+                                                onclick={viewPatientData}></lightning-button-icon>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                                </table>
+                                </template>
+                                </lightning-card>
+                                </div>
+                        </lightning-card> 
+                    </template>
+
+                    <template if:true={showPatientInfo}>
+                        <lightning-card title="Patient Information">
+                            <lightning-tabset>
+                                <template if:true={isEditDisabled}>
+                                <div class="slds-align_absolute-center">
+                                    <lightning-button class="slds-m-top_small" label="Edit Information" onclick={changeToEditMode}></lightning-button>
+                                </div>
+                                </template>
+                                <lightning-tab label="Personal Details">
+                                    <lightning-record-edit-form object-api-name="Patient__c" record-id={selectedPatientId} onsuccess={handleUpdateSuccess}>
+                                        <lightning-messages> </lightning-messages>
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-col slds-size_1-of-2">
+                                                <lightning-input-field field-name="Salutation__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Full_Name__c" disabled="true"> </lightning-input-field>
+                                                <lightning-input-field field-name="First_Name__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Middle_Name__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Last_Name__c" disabled={isEditDisabled}> </lightning-input-field>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-2">    
+                                                <lightning-input-field field-name="Gender__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="PPS_Number__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Marital_Status__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Date_of_Birth__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Passport_Number__c" disabled={isEditDisabled}> </lightning-input-field></br></br>
+                                            </div>
+                                        <template if:false={isEditDisabled}>
+                                            <div class="slds-align_absolute-center">
+                                                <lightning-button class="slds-m-top_small buttonset" label="Reset" onclick={handleReset}></lightning-button>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="Submit"
+                                                label="Submit"></lightning-button>
+                                            </div>
+                                        </template>
+                                        </div>
+                                    </lightning-record-edit-form>
+                                </lightning-tab>
+                            
+                                <lightning-tab label="Contact Details">
+                                    <lightning-record-edit-form object-api-name="Patient__c" record-id={selectedPatientId} onsuccess={handleUpdateSuccess}>
+                                        <lightning-messages> </lightning-messages>
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-col slds-size_1-of-2">
+                                                <lightning-input-field field-name="Address_Line_1__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Address_Line_2__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="County__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="City__c" disabled={isEditDisabled}> </lightning-input-field>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-2">   
+                                            <lightning-input-field field-name="Country__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Postal_Code__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Contact_Number__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Email__c" disabled={isEditDisabled}> </lightning-input-field></br></br>
+                                            </div>
+                                        <template if:false={isEditDisabled}>
+                                            <div class="slds-align_absolute-center">
+                                                <lightning-button class="slds-m-top_small buttonset" label="Reset" onclick={handleReset}></lightning-button>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="Submit"
+                                                label="Submit"></lightning-button>
+                                            </div>
+                                        </template>
+                                        </div>
+                                    </lightning-record-edit-form>
+                                </lightning-tab>
+
+                                <lightning-tab label="Health Details">
+                                    <lightning-record-edit-form object-api-name="Patient__c" record-id={selectedPatientId} onsuccess={handleUpdateSuccess}>
+                                        <lightning-messages> </lightning-messages>
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-col slds-size_1-of-2">
+                                                <lightning-input-field field-name="Do_you_drink__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Any_Disability__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Any_other_Information__c" disabled={isEditDisabled}> </lightning-input-field>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-2">   
+                                            <lightning-input-field field-name="Do_you_smoke__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Any_Health_History_Related_Information__c" disabled={isEditDisabled}></lightning-input-field>
+                                            </div>
+                                        <template if:false={isEditDisabled}>
+                                            <div class="slds-align_absolute-center">
+                                                <lightning-button class="slds-m-top_small buttonset" label="Reset" onclick={handleReset}></lightning-button>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="Submit"
+                                                label="Submit"></lightning-button>
+                                            </div>
+                                        </template>
+                                        </div>
+                                    </lightning-record-edit-form>
+                                </lightning-tab>
+
+                                <lightning-tab label="Guardian Details">
+                                    <lightning-record-edit-form object-api-name="Patient__c" record-id={selectedPatientId} onsuccess={handleUpdateSuccess}>
+                                        <lightning-messages> </lightning-messages>
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-col slds-size_1-of-2">
+                                                <lightning-input-field field-name="Guardian_Name__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Guardian_Address__c" disabled={isEditDisabled}> </lightning-input-field>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-2">   
+                                            <lightning-input-field field-name="Guardian_Relationship__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Guardian_Contact_Number__c" disabled={isEditDisabled}></lightning-input-field>
+                                            </div>
+                                        <template if:false={isEditDisabled}>
+                                            <div class="slds-align_absolute-center">
+                                                <lightning-button class="slds-m-top_small buttonset" label="Reset" onclick={handleReset}></lightning-button>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="Submit"
+                                                label="Submit"></lightning-button>
+                                            </div>
+                                        </template>
+                                        </div>
+                                    </lightning-record-edit-form>
+                                </lightning-tab>
+
+                                <lightning-tab label="Treatment Details">
+                                    <lightning-record-edit-form object-api-name="Patient__c" record-id={selectedPatientId} onsuccess={handleUpdateSuccess}>
+                                        <lightning-messages> </lightning-messages>
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-col slds-size_1-of-2">
+                                                <lightning-input-field field-name="Doctor_s_Consultation__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Patient_need_to_take_any_tests__c" disabled={isEditDisabled}> </lightning-input-field>
+                                            
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-2">   
+                                                <lightning-input-field field-name="Next_Appointment_Date__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Doctor_s_Prescribed_Medicine__c" disabled={isEditDisabled}></lightning-input-field>
+                                            </div>
+                                        <template if:false={isEditDisabled}>
+                                            <div class="slds-align_absolute-center">
+                                                <lightning-button class="slds-m-top_small buttonset" label="Reset" onclick={handleReset}></lightning-button>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="Submit"
+                                                label="Submit"></lightning-button>
+                                            </div>
+                                        </template>
+                                        </div>
+                                    </lightning-record-edit-form>
+                                </lightning-tab>
+
+                                <lightning-tab label="Billing Details">
+                                    <lightning-record-edit-form object-api-name="Patient__c" record-id={selectedPatientId} onsuccess={handleUpdateSuccess}>
+                                        <lightning-messages> </lightning-messages>
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-col slds-size_1-of-2">
+                                                <lightning-input-field field-name="Admitted_Date__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Total_Amount__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Amount_Pending__c" disabled={isEditDisabled}> </lightning-input-field>
+                                            
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-2">   
+                                                <lightning-input-field field-name="Discharge_Date__c" disabled={isEditDisabled}> </lightning-input-field>
+                                                <lightning-input-field field-name="Amount_Paid__c" disabled={isEditDisabled}></lightning-input-field>
+                                                <lightning-input-field field-name="Billing_Status__c" disabled={isEditDisabled}></lightning-input-field>
+                                            </div>
+                                        <template if:false={isEditDisabled}>
+                                            <div class="slds-align_absolute-center">
+                                                <lightning-button class="slds-m-top_small buttonset" label="Reset" onclick={handleReset}></lightning-button>
+                                                <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="Submit"
+                                                label="Submit"></lightning-button>
+                                            </div>
+                                        </template>
+                                        </div>
+                                    </lightning-record-edit-form>
+                                </lightning-tab>
+                            </lightning-tabset>  
+                        </lightning-card>
+                    </template>
+
+
+                </div>
+              
+
+        <template if:true={isShowSpinner}>
+        <div class="demo-only demo-only_viewport demo--inverse" style="height:6rem;background-color:#16325c;position:relative">
+            <div class="slds-spinner_container slds-is-fixed">
+                <div role="status" class="slds-spinner slds-spinner_medium">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+    </lightning-card> 
+</template>

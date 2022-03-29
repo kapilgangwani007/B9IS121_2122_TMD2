@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Doctor_Role__c</fullName>
+    <externalId>false</externalId>
+    <label>Doctor Role</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Attending physician</fullName>
+                <default>false</default>
+                <label>Attending physician</label>
+            </value>
+            <value>
+                <fullName>Fellow (optional)</fullName>
+                <default>false</default>
+                <label>Fellow (optional)</label>
+            </value>
+            <value>
+                <fullName>Resident</fullName>
+                <default>false</default>
+                <label>Resident</label>
+            </value>
+            <value>
+                <fullName>Intern</fullName>
+                <default>false</default>
+                <label>Intern</label>
+            </value>
+            <value>
+                <fullName>Medical Student</fullName>
+                <default>false</default>
+                <label>Medical Student</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

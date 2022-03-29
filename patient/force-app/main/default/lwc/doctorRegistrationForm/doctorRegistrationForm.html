@@ -1,0 +1,50 @@
+<template>
+<lightning-card>
+    <template if:true={isReceptionist}>
+    <div class="slds-text-heading_large slds-align_absolute-center">Doctor/Receptionist Registration Form</div><br/><br/>
+    <div class="slds-text-body_regular"><b>Personal Information:</b></div><br/>
+        <lightning-record-edit-form object-api-name="Contact"  onsubmit={handleCreateSubmit} onerror={handleCreateError} onsuccess={handleCreateSuccess}>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input-field field-name="FirstName" value={firstName} required> </lightning-input-field>
+                    <lightning-input-field field-name="LastName" value={lastName} required> </lightning-input-field>
+                    <lightning-input-field field-name="Gender__c" value={gender} required> </lightning-input-field>
+                    <lightning-input-field field-name="License_Number__c" value={licenseNumber} required> </lightning-input-field>
+                    <lightning-input-field field-name="Profession__c" value={profession} required> </lightning-input-field>
+                    <lightning-input-field field-name="Available_Days__c" value={availableDays} required> </lightning-input-field>
+                </div>
+                <div class="slds-col slds-size_1-of-2">    
+                    <lightning-input-field field-name="Middle_Name__c" value={middleName} > </lightning-input-field>
+                    <lightning-input-field field-name="PPS_Number__c" value={ppsnValue} required> </lightning-input-field>
+                    <lightning-input-field field-name="Doctor_Role__c" value={doctorRole} required> </lightning-input-field>
+                    <lightning-input-field field-name="Date_of_Birth__c" value={dob} required> </lightning-input-field>
+                    <lightning-input-field field-name="Other_Information__c" value={otherInfo} > </lightning-input-field></br></br>
+                </div>
+            </div><br/><br/>
+
+        <div class="slds-text-body_regular"><b>Contact Information:</b></div><br/>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input-field field-name="Address__c" value={address} required> </lightning-input-field>
+                    <lightning-input-field field-name="City__c" value={city} required> </lightning-input-field>
+                    <lightning-input-field field-name="Country__c" value={country} required> </lightning-input-field></br></br>
+                </div>
+                <div class="slds-col slds-size_1-of-2">    
+                    <lightning-input-field field-name="County__c" value={county} required> </lightning-input-field>
+                    <lightning-input-field field-name="Postal_Code__c" value={postalCode} required> </lightning-input-field>
+                    <lightning-input-field field-name="Email" value={email} required> </lightning-input-field>
+                    <lightning-input-field field-name="Phone" value={phone} required> </lightning-input-field>
+                    <lightning-input-field class="slds-hidden" field-name="AccountId" value="0018d0000078vFx"> </lightning-input-field>
+                    </div>
+                <div class="slds-align_absolute-center">
+                    <lightning-button class="slds-m-top_small buttonset" variant="brand-outline" label="Reset" onclick={handleReset}></lightning-button>
+                    <lightning-button class="slds-m-top_small" variant="brand"  name="Save" type="submit" label="Save"></lightning-button>
+                </div>
+            </div>
+        </lightning-record-edit-form>
+    </template>
+    <template if:false={isReceptionist}>
+             <div class="slds-text-heading_large slds-align_absolute-center">Please contact receptionist to register Doctor or New Receptionist details.</div>
+    </template>
+</lightning-card>
+</template>
